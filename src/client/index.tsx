@@ -125,7 +125,7 @@ function Icon({ kind }: { kind: 'edit' | 'retry' | 'recall' | 'tree' | 'previous
   const paths = {
     previous: 'M13 5 7 11l6 6',
     next: 'm9 5 6 6-6 6',
-    edit: 'M11 3 15 7 M3 13 2 18 7 17 18 6 14 2 3 13Z',
+    edit: 'M12 4 16 8 M3 13 2 18 7 17 18 6 14 2 3 13Z',
     retry: 'M17 7a7 7 0 1 0 0 7 M17 2v5h-5',
     recall: 'M8 4 3 9l5 5 M3 9h9a5 5 0 0 1 0 10',
     tree: 'M5 3v14 M5 7h10 M5 15h10 M15 5v4 M15 13v4',
