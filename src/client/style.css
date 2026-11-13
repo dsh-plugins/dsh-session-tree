@@ -1,14 +1,23 @@
 .dsh-tree-message{min-width:0}
 .dsh-tree-actions,.dsh-tree-branches,.dsh-tree-header{display:inline-flex;align-items:center;gap:6px}
-.dsh-tree-actions{margin:5px 0;color:var(--color-text-3)}
-.dsh-tree-message>.dsh-tree-actions{display:flex;justify-content:flex-end}
-.dsh-tree-message>.dsh-tree-branches{display:flex;width:fit-content;margin:6px auto 12px}
+.dsh-tree-actions{color:var(--color-text-3)}
+.dsh-tree-message-user{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:6px}
+.dsh-tree-message-user>:has(>[data-clock="start"]){display:contents}
+.dsh-tree-message-user>:has(>[data-clock="start"])>:not([data-clock="start"]){grid-column:1/-1;justify-self:end}
+.dsh-tree-message-user [data-clock="start"]{grid-column:2;opacity:1}
+.dsh-tree-message-user>.dsh-tree-actions{grid-column:3;justify-self:end}
+.dsh-tree-assistant-actions{display:contents}
+.dsh-tree-assistant-actions>.dsh-tree-branches{order:-3}
+[data-clock="end"]:has(.dsh-tree-assistant-actions)>button:first-child{order:-2}
+.dsh-tree-assistant-actions>button{order:-1}
 .dsh-tree-actions button,.dsh-tree-branches button,.dsh-tree-header>button,.dsh-tree-editor button,.dsh-tree-dock button,.dsh-tree-dialog button{font:inherit;border:1px solid var(--color-border-2);border-radius:6px;background:var(--color-bg-2);color:var(--color-text-2);padding:4px 9px;cursor:pointer}
+.dsh-tree-actions button,.dsh-tree-branches button{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:28px;height:28px;padding:6px;border:0;background:transparent;color:var(--color-text-3)}
 .dsh-tree-actions button:hover,.dsh-tree-branches button:hover,.dsh-tree-header>button:hover,.dsh-tree-editor button:hover,.dsh-tree-dock button:hover,.dsh-tree-dialog button:hover{background:var(--color-fill-2);color:var(--color-text-1)}
 .dsh-tree-actions button:disabled,.dsh-tree-branches button:disabled,.dsh-tree-editor button:disabled,.dsh-tree-dock button:disabled,.dsh-tree-dialog button:disabled{opacity:.45;cursor:not-allowed}
-.dsh-tree-message button:focus-visible,.dsh-tree-header button:focus-visible,.dsh-tree-dock button:focus-visible,.dsh-tree-dialog button:focus-visible,.dsh-tree-editor textarea:focus-visible{outline:2px solid rgb(var(--primary-6));outline-offset:2px}
-.dsh-tree-branches{font-size:12px;font-variant-numeric:tabular-nums;color:var(--color-text-3);white-space:nowrap}
-.dsh-tree-branches button{padding:1px 8px;font-size:19px;line-height:24px}
+.dsh-tree-actions button:focus-visible,.dsh-tree-message button:focus-visible,.dsh-tree-header button:focus-visible,.dsh-tree-dock button:focus-visible,.dsh-tree-dialog button:focus-visible,.dsh-tree-editor textarea:focus-visible{outline:2px solid rgb(var(--primary-6));outline-offset:2px}
+.dsh-tree-branches{gap:2px;font-size:13px;font-variant-numeric:tabular-nums;color:var(--color-text-3);white-space:nowrap}
+.dsh-tree-branches span{min-width:34px;text-align:center}
+.dsh-tree-actions button:disabled:hover,.dsh-tree-branches button:disabled:hover{background:transparent;color:var(--color-text-3)}
 .dsh-tree-editor{margin:8px 0;padding:12px;border:1px solid var(--color-border-2);border-radius:10px;background:var(--color-bg-2)}
 .dsh-tree-editor-scroll{max-height:320px}
 .dsh-tree-editor textarea{display:block;box-sizing:border-box;width:100%;min-height:90px;resize:none;overflow:hidden;border:0;border-radius:4px;padding:8px;background:var(--color-bg-2);color:var(--color-text-1);font:inherit;line-height:1.6;white-space:pre-wrap}

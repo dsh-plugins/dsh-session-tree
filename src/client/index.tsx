@@ -51,14 +51,14 @@ export function apply(ctx: ClientContext): void {
       }
     }, [draft]);
     const disabled = state.mutating || state.running || state.tree?.busy === true;
-    return <div className="dsh-tree-message" data-tree-message-id={props.messageId}>
+    return <div className={`dsh-tree-message${node && props.role === 'user' && !draft ? ' dsh-tree-message-user' : ''}`} data-tree-message-id={props.messageId}>
       {draft && node ? <InlineEditor client={client!} store={store} node={node} draft={draft}
         disabled={disabled} onClose={() => { restoreEditFocus.current = true; store.closeEdit(node.id); }} /> : props.original}
       {node && props.role === 'user' && !draft && <div className="dsh-tree-actions">
         <button type="button" ref={editButton} disabled={disabled} aria-label="编辑消息" title={disabled ? busyHint : '编辑并创建同级分支'} onClick={() => { store.beginEdit(node.id, props.content); }}><Icon kind="edit" /></button>
         <RecallButton store={store} state={state} node={node} />
+        <Branches store={store} state={state} node={node} />
       </div>}
-      {node && <Branches store={store} state={state} childrenIds={node.children} selectedId={node.selectedChildId} />}
     </div>;
   }
   function AssistantActions({ sessionId, messageId }: { sessionId: string; messageId: string }): React.ReactNode {
@@ -68,7 +68,8 @@ export function apply(ctx: ClientContext): void {
       return null;
     }
     const disabled = state.mutating || state.running || state.tree?.busy === true;
-    return <span className="dsh-tree-actions">
+    return <span className="dsh-tree-actions dsh-tree-assistant-actions">
+      <Branches store={store} state={state} node={node} />
       <button type="button" disabled={disabled} aria-label="重试回答" title={disabled ? busyHint : '保留当前回答并生成同级回答'}
         onClick={() => { run(store.mutate('retry', node.id)); }}><Icon kind="retry" /></button>
     </span>;
@@ -100,11 +101,10 @@ export function apply(ctx: ClientContext): void {
     const [store, state] = useTree(sessionId);
     return <span className="dsh-tree-header">
       <TreeLauncher store={store} state={state} />
-      {state.tree && <Branches store={store} state={state} childrenIds={state.tree.rootChildren} selectedId={state.tree.rootSelectedChildId} />}
     </span>;
   }
   const release = [
-    client.registerMessageExtension({ id: name, Message }),
+    client.registerMessageExtension({ id: name, Message, forkedTurnLabels: { label: '分支前的处理记录', duration: '分支前的处理记录，用时 ' } }),
     client.registerAssistantActions(name, AssistantActions),
     client.registerComposerDock(name, Dock),
     client.registerHeaderAction(name, Header),
@@ -121,8 +121,10 @@ export function apply(ctx: ClientContext): void {
 
 const busyHint = '请先手动停止生成，或等待当前生成完成';
 
-function Icon({ kind }: { kind: 'edit' | 'retry' | 'recall' | 'tree' }): React.ReactElement {
+function Icon({ kind }: { kind: 'edit' | 'retry' | 'recall' | 'tree' | 'previous' | 'next' }): React.ReactElement {
   const paths = {
+    previous: 'M13 5 7 11l6 6',
+    next: 'm9 5 6 6-6 6',
     edit: 'M11 3 15 7 M3 13 2 18 7 17 18 6 14 2 3 13Z',
     retry: 'M17 7a7 7 0 1 0 0 7 M17 2v5h-5',
     recall: 'M8 4 3 9l5 5 M3 9h9a5 5 0 0 1 0 10',
@@ -154,11 +156,13 @@ function RecallButton({ store, state, node }: { store: TreeStore; state: TreeSta
     onClick={() => { run(store.mutate('recall', node.id)); }}><Icon kind="recall" /></button>;
 }
 
-function Branches({ store, state, childrenIds, selectedId }: { store: TreeStore; state: TreeState; childrenIds: readonly string[]; selectedId: string | null }): React.ReactNode {
-  if (childrenIds.length < 2) {
+function Branches({ store, state, node }: { store: TreeStore; state: TreeState; node: TreeNode }): React.ReactNode {
+  const tree = state.tree;
+  const childrenIds = node.parentId === null ? tree?.rootChildren ?? [] : tree?.nodes[node.parentId]?.children ?? [];
+  const index = childrenIds.indexOf(node.id);
+  if (childrenIds.length < 2 || index < 0) {
     return null;
   }
-  const index = selectedId === null ? -1 : childrenIds.indexOf(selectedId);
   const disabled = state.mutating || state.running || state.tree?.busy === true;
   const select = (next: number) => {
     const id = childrenIds[next];
@@ -166,10 +170,10 @@ function Branches({ store, state, childrenIds, selectedId }: { store: TreeStore;
       run(store.mutate('select', id));
     }
   };
-  return <nav className="dsh-tree-branches" aria-label="子分支">
-    <button type="button" aria-label="上一个分支" disabled={disabled || index <= 0} title={disabled ? busyHint : '上一个分支'} onClick={() => { select(index - 1); }}>‹</button>
-    <span aria-live="polite">{index + 1}/{childrenIds.length}</span>
-    <button type="button" aria-label="下一个分支" disabled={disabled || index >= childrenIds.length - 1} title={disabled ? busyHint : '下一个分支'} onClick={() => { select(index + 1); }}>›</button>
+  return <nav className="dsh-tree-branches" aria-label={node.role === 'user' ? '用户消息版本' : '回答版本'}>
+    <button type="button" aria-label="上一个分支" disabled={disabled || index <= 0} title={disabled ? busyHint : '上一个分支'} onClick={() => { select(index - 1); }}><Icon kind="previous" /></button>
+    <span aria-live="polite">{index + 1} / {childrenIds.length}</span>
+    <button type="button" aria-label="下一个分支" disabled={disabled || index >= childrenIds.length - 1} title={disabled ? busyHint : '下一个分支'} onClick={() => { select(index + 1); }}><Icon kind="next" /></button>
   </nav>;
 }
 
@@ -226,7 +230,7 @@ function InlineEditor({ client, store, node, draft, disabled, onClose }: {
     }
   }
   const locked = disabled || sending;
-  return <div className="dsh-tree-editor" aria-label="编辑消息" onKeyDown={event => {
+  return <div className="dsh-tree-editor" role="group" aria-label="编辑消息" onKeyDown={event => {
     if (event.key === 'Escape' && !event.nativeEvent.isComposing) {
       event.preventDefault();
       event.stopPropagation();
