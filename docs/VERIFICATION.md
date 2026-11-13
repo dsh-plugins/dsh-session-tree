@@ -31,4 +31,6 @@
 
 客户端采用官方公开 `resync()` 重建历史，并重置投影水位。loader 仅在内部重建期间暂缓 `api-session/removed`，真实会话删除仍按原行为通知。
 
-本次没有发布 npm 或推送远程。插件需要本次配套 loader 构建，不能仅凭已有 `2.0.0` 版本号判断会话扩展已存在。
+树插件的 npm 发布工作流已在本地通过 actionlint 1.7.12、版本解析分支验证（main、匹配标签、错误标签、非稳定基础版本）和元数据脚本幂等验证。使用 npm 下载的 `@dsh-plugin/dsh-loader@2.0.0-dev.43473963317` 执行 `pnpm install --frozen-lockfile`、`pnpm run typecheck`、`pnpm run build`、`pnpm test` 和 `pnpm pack` 均通过，锁文件不再依赖本地 loader 链接。三平台 GitHub Actions 将在树插件推送或 PR 时执行。
+
+配套 loader 提交 `dbb96dbb3af607c9e3e5418d3c7d08fd5d29837b` 已发布到 npm `next`，精确版本为 `2.0.0-dev.43473963317`，已核对注册表 `gitHead`、tarball、integrity 与线上插件目录。loader 的 CI、市场聚合和站点部署均成功；树插件本轮仅提交发布配置，尚未推送或发布。

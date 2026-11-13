@@ -1,2 +1,4 @@
 allowBuilds:
   esbuild: true
+minimumReleaseAgeExclude:
+  - '@dsh-plugin/dsh-loader@2.0.0-dev.43473963317'

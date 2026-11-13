@@ -1,6 +1,9 @@
 {
   "name": "@dsh-plugin/dsh-session-tree",
   "version": "0.1.0",
+  "packageManager": "pnpm@11.17.0",
+  "repository": { "type": "git", "url": "git+https://github.com/dsh-plugins/dsh-session-tree.git" },
+  "publishConfig": { "access": "public", "registry": "https://registry.npmjs.org/" },
   "description": "支持分支切换、编辑、撤回和重试的 DSH 树状会话插件。",
   "type": "module",
   "main": "lib/index.js",
@@ -23,9 +26,9 @@
     "bundle": { "patch": "./cordis.patch.yml" },
     "client": { "inject": ["@dsh-plugin/dsh-loader"], "platform": "web" }
   },
-  "peerDependencies": { "@dsh-plugin/dsh-loader": ">=2.0.0" },
+  "peerDependencies": { "@dsh-plugin/dsh-loader": "^2.0.0-dev.43473963317" },
   "devDependencies": {
-    "@dsh-plugin/dsh-loader": "link:../dsh-loader",
+    "@dsh-plugin/dsh-loader": "2.0.0-dev.43473963317",
     "@types/node": "^26.2.0",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",

@@ -11,7 +11,7 @@
 
 ## 安装与运行
 
-本插件需要配套包含会话扩展接口的本次 `@dsh-plugin/dsh-loader` 构建。现有 npm 上的同版本号不代表包含这些接口。构建使用 `pnpm install`、`pnpm run typecheck`、`pnpm run build`，算法测试使用 `pnpm test`。
+本插件需要 `@dsh-plugin/dsh-loader@^2.0.0-dev.43473963317`，其中包含会话扩展和分支轮次标题接口。开发依赖固定为 `2.0.0-dev.43473963317`，使用 Node.js 24 与 pnpm 11.17.0。构建使用 `pnpm install --frozen-lockfile`、`pnpm run typecheck`、`pnpm run build`，算法测试使用 `pnpm test`。
 
 当前兼容 DSH `0.2.2-rc.1` 和 `0.2.2-rc.2`，已在独立测试实例验证。安装后需要重启目标宿主，使 loader 从会话创建时捕获生命周期；缺少句柄的旧活动会话会明确拒绝改写。
 
@@ -32,5 +32,16 @@
 原位编辑保留原附件，也支持添加和移除附件。发送失败保留编辑内容。硬撤回恢复会合并已有普通文本草稿和附件；输入框包含引用或命令时保留待恢复草稿，先处理当前输入后再恢复。
 
 分支切换改变模型上下文，不撤销历史工具调用已产生的文件修改或外部操作。重试截断的旧轮次如果仍含处理内容，会显示为“分支前的处理记录”，保留展开查看入口；空的截断轮次不显示完成提示。停用插件后官方系统仍可读取最后导出的激活路径，其他分支需要重新启用插件访问。
+
+## CI 与 npm 发布
+
+工作流 `.github/workflows/npm-publish.yml` 参考 `dsh-auxiliary`，在 Linux、Windows、macOS 上执行锁定依赖安装、类型检查、构建、算法测试与包内容检查。PR 和手动运行只执行检查。
+
+- 推送 `main`：将稳定基础版本 `X.Y.Z` 转为 `X.Y.Z-dev.<GitHub run ID>`，发布到 `next`。
+- 推送 `vX.Y.Z` 标签：要求标签与 `package.json` 版本完全一致，发布到 `latest`。
+- 已存在的版本跳过重复发布；注册表查询出现非 404 错误时立即失败。
+- 正式版发布成功后，`scripts/dump-npm-latest.mjs` 读取 npm 的精确版本、发布时间、tarball 和 integrity，回写 `npm-latest.json` 并提交到 `main`；数据未变化时不提交。
+
+首次发布前，在 npm 为此仓库的 `npm-publish.yml` 配置 Trusted Publisher，或在 GitHub 配置有目标包发布权限的 `NPM_TOKEN`。发布任务授予 `id-token: write`；元数据回写任务使用 `GITHUB_TOKEN` 的 `contents: write`，仓库分支保护需允许该机器人提交。未配置 npm 认证或分支保护拒绝回写时，对应任务会报错。
 
 配置字段见 [配置说明](docs/CONFIG.md)，测试范围和复现方式见 [验证记录](docs/VERIFICATION.md)。
