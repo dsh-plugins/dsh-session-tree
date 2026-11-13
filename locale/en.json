@@ -1,0 +1,1 @@
+{"meta":{"title":"Session tree","description":"Switch message branches, edit user messages in place, recall pending input, and retry assistant replies. Stores the complete tree separately and exports the active path in the official session format. Requires the matching dsh-loader session extensions."}}

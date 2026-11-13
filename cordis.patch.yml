@@ -1,0 +1,3 @@
+- insert:
+    - id: session-tree
+      name: '@dsh-plugin/dsh-session-tree'

@@ -1,0 +1,41 @@
+.dsh-tree-message{min-width:0}
+.dsh-tree-actions,.dsh-tree-branches,.dsh-tree-header{display:inline-flex;align-items:center;gap:6px}
+.dsh-tree-actions{margin:5px 0;color:var(--color-text-3)}
+.dsh-tree-message>.dsh-tree-actions{display:flex;justify-content:flex-end}
+.dsh-tree-message>.dsh-tree-branches{display:flex;width:fit-content;margin:6px auto 12px}
+.dsh-tree-actions button,.dsh-tree-branches button,.dsh-tree-header>button,.dsh-tree-editor button,.dsh-tree-dock button,.dsh-tree-dialog button{font:inherit;border:1px solid var(--color-border-2);border-radius:6px;background:var(--color-bg-2);color:var(--color-text-2);padding:4px 9px;cursor:pointer}
+.dsh-tree-actions button:hover,.dsh-tree-branches button:hover,.dsh-tree-header>button:hover,.dsh-tree-editor button:hover,.dsh-tree-dock button:hover,.dsh-tree-dialog button:hover{background:var(--color-fill-2);color:var(--color-text-1)}
+.dsh-tree-actions button:disabled,.dsh-tree-branches button:disabled,.dsh-tree-editor button:disabled,.dsh-tree-dock button:disabled,.dsh-tree-dialog button:disabled{opacity:.45;cursor:not-allowed}
+.dsh-tree-message button:focus-visible,.dsh-tree-header button:focus-visible,.dsh-tree-dock button:focus-visible,.dsh-tree-dialog button:focus-visible,.dsh-tree-editor textarea:focus-visible{outline:2px solid rgb(var(--primary-6));outline-offset:2px}
+.dsh-tree-branches{font-size:12px;font-variant-numeric:tabular-nums;color:var(--color-text-3);white-space:nowrap}
+.dsh-tree-branches button{padding:1px 8px;font-size:19px;line-height:24px}
+.dsh-tree-editor{margin:8px 0;padding:12px;border:1px solid var(--color-border-2);border-radius:10px;background:var(--color-bg-2)}
+.dsh-tree-editor-scroll{max-height:320px}
+.dsh-tree-editor textarea{display:block;box-sizing:border-box;width:100%;min-height:90px;resize:none;overflow:hidden;border:0;border-radius:4px;padding:8px;background:var(--color-bg-2);color:var(--color-text-1);font:inherit;line-height:1.6;white-space:pre-wrap}
+.dsh-tree-editor-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+.dsh-tree-editor-hint{flex:1;min-width:140px;font-size:12px;color:var(--color-text-3)}
+.dsh-tree-editor .dsh-tree-primary{background:rgb(var(--primary-6));border-color:rgb(var(--primary-6));color:var(--color-white)}
+.dsh-tree-attachments{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.dsh-tree-attachment{display:flex;align-items:center;gap:5px;max-width:100%;padding:4px 6px;border:1px solid var(--color-border-2);border-radius:6px;color:var(--color-text-2);background:var(--color-fill-1)}
+.dsh-tree-attachment>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
+.dsh-tree-attachment img{width:36px;height:36px;object-fit:cover;border-radius:4px}
+.dsh-tree-attachment button{border:0;padding:0 4px}
+.dsh-tree-dock{font-size:12px;color:var(--color-text-2);min-width:0}
+.dsh-tree-pending-row,.dsh-tree-recovery,.dsh-tree-error{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0}
+.dsh-tree-pending-row>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dsh-tree-pending-row>button,.dsh-tree-recovery>button{flex-shrink:0}
+.dsh-tree-error{color:rgb(var(--danger-6));overflow-wrap:anywhere}
+.dsh-tree-backdrop{position:fixed;inset:0;z-index:1100;display:flex;justify-content:center;align-items:center;background:var(--color-mask-bg);padding:120px 24px;box-sizing:border-box}
+.dsh-tree-dialog{box-sizing:border-box;display:flex;flex-direction:column;width:min(760px,100%);max-height:calc(100dvh - 240px);min-height:0;border:1px solid var(--color-border-2);border-radius:12px;box-shadow:0 12px 40px var(--color-mask-bg);background:var(--color-bg-2);color:var(--color-text-1);outline:none}
+.dsh-tree-dialog>header,.dsh-tree-dialog>footer{display:flex;flex-shrink:0;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px}
+.dsh-tree-dialog h2{font-size:16px;margin:0}
+.dsh-tree-dialog>header{border-bottom:1px solid var(--color-border-2)}
+.dsh-tree-dialog>footer{justify-content:flex-end;border-top:1px solid var(--color-border-2)}
+.dsh-tree-dialog-scroll{min-height:0;flex:1;padding:8px 12px}
+.dsh-tree-busy{flex-shrink:0;margin:8px 16px;color:var(--color-text-3);font-size:12px}
+.dsh-tree-row{display:flex;align-items:center;gap:8px;border-left:2px solid transparent;padding:4px 8px;min-width:0}
+.dsh-tree-row.is-active{border-left-color:rgb(var(--primary-6));background:var(--color-fill-2)}
+.dsh-tree-dialog .dsh-tree-node{display:flex;align-items:center;gap:8px;flex:1;min-width:0;border:0;background:transparent;text-align:start}
+.dsh-tree-role{font-size:12px;color:var(--color-text-3);flex-shrink:0}
+.dsh-tree-preview{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+@media(max-width:600px){.dsh-tree-backdrop{padding-left:12px;padding-right:12px}.dsh-tree-editor-hint{flex-basis:100%;order:1}}
