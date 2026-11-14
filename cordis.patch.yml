@@ -1,3 +1,5 @@
 - insert:
+    - id: dsh-session-tree-loader-check
+      name: '@dsh-plugin/dsh-session-tree/loader-check'
     - id: session-tree
       name: '@dsh-plugin/dsh-session-tree'

@@ -13,7 +13,7 @@
 
 本插件需要 `@dsh-plugin/dsh-loader@^2.0.0-dev.43473963317`，其中包含会话扩展和分支轮次标题接口。开发依赖固定为 `2.0.0-dev.43473963317`，使用 Node.js 24 与 pnpm 11.17.0。构建使用 `pnpm install --frozen-lockfile`、`pnpm run typecheck`、`pnpm run build`，算法测试使用 `pnpm test`。
 
-当前兼容 DSH `0.2.2-rc.1` 和 `0.2.2-rc.2`，已在独立测试实例验证。安装后需要重启目标宿主，使 loader 从会话创建时捕获生命周期；缺少句柄的旧活动会话会明确拒绝改写。
+支持 DSH `>=0.2.2-alpha.1`；已有独立实例验证记录见 `docs/VERIFICATION.md`。安装后需要重启目标宿主，使 loader 从会话创建时捕获生命周期；缺少句柄的旧活动会话会明确拒绝改写。
 
 ## 数据
 

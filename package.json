@@ -9,19 +9,21 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "exports": {
+    "./loader-check": "./loader-check.mjs",
     ".": { "types": "./lib/index.d.ts", "default": "./lib/index.js" },
     "./client": "./lib/client.js",
     "./package.json": "./package.json",
     "./locale/*.json": "./locale/*.json",
     "./icon": "./icon.svg"
   },
-  "files": ["lib", "cordis.patch.yml", "README.md", "docs", "locale", "icon.svg", "LICENSE"],
+  "files": [
+    "loader-check.mjs","lib", "cordis.patch.yml", "README.md", "docs", "locale", "icon.svg", "LICENSE"],
   "scripts": {
     "typecheck": "tsc --noEmit && tsc -p tsconfig.client.json --noEmit",
     "build": "tsc && tsdown --config tsdown.config.ts",
     "test": "tsx --test tests/*.test.ts"
   },
-  "engines": { "node": ">=24.9.0", "dsh": "0.2.2-rc.1 || 0.2.2-rc.2" },
+  "engines": { "node": ">=24.9.0", "dsh": ">=0.2.2-alpha.1" },
   "dsh": {
     "bundle": { "patch": "./cordis.patch.yml" },
     "client": { "inject": ["@dsh-plugin/dsh-loader"], "platform": "web" }
