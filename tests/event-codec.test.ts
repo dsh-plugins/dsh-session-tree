@@ -23,6 +23,54 @@ function log(): SessionEvent[] {
   return entries.map((entry, seq) => ({ ...entry, seq, time: seq + 10 }) as SessionEvent);
 }
 
+function compactedLog(): SessionEvent[] {
+  const events = log();
+  // 上下文依次变为 [11, 6, 8]、[12, 8]、[13]，后两次替换的端点序号逆序。
+  for (const [startSeq, endSeq] of [[2, 5], [11, 6], [12, 8]]) {
+    const seq = events.length;
+    events.push({
+      seq, time: seq + 10, type: 'user/message',
+      data: { ...user(`summary-${seq}`), source: { kind: 'compact-checkpoint', compactionId: `compact-${seq}` } },
+      sourceEventSeqs: [startSeq, endSeq], surfaceOp: { op: 'replace', startSeq, endSeq },
+    });
+  }
+  return events;
+}
+
+test('多次压缩的逆序端点可完整导入导出并恢复树文档', () => {
+  const events = compactedLog();
+  const tree = importSession(header, events);
+  assert.deepEqual(getActivePath(tree).map((node) => node.messageId), ['u1', 'a1']);
+  assert.deepEqual(exportSession(tree), { header, events });
+  const restored = parseTreeDocument(JSON.parse(JSON.stringify(tree)));
+  assert.deepEqual(restored, tree);
+  assert.deepEqual(exportSession(restored), { header, events });
+});
+
+test('多次压缩逐事件同步保留摘要及其来源引用', () => {
+  const events = compactedLog();
+  let tree = importSession(header, log());
+  for (let count = log().length + 1; count <= events.length; count += 1) {
+    tree = syncSession(tree, header, events.slice(0, count));
+    assert.deepEqual(exportSession(tree).events, events.slice(0, count));
+    tree = parseTreeDocument(JSON.parse(JSON.stringify(tree)));
+    assert.deepEqual(exportSession(tree).events, events.slice(0, count));
+  }
+  assert.equal(Object.keys(tree.nodes).length, 2);
+});
+
+test('压缩替换的两端仍拒绝负数、非整数、自引用及未来引用', () => {
+  for (const endpoint of ['startSeq', 'endSeq'] as const) {
+    for (const invalid of [-1, 1.5, 13, 14, NaN, Infinity]) {
+      const events = compactedLog();
+      events.at(-1)!.surfaceOp = { op: 'replace', startSeq: 12, endSeq: 8, [endpoint]: invalid };
+      const message = `${endpoint}=${invalid}`;
+      assert.throws(() => importSession(header, events), /表面替换范围无效：13/, message);
+      assert.throws(() => syncSession(importSession(header, log()), header, events), /表面替换范围无效：13/, message);
+    }
+  }
+});
+
 test('官方事件完整往返保留未知字段、注入消息、流与工具结果', () => {
   const events = log();
   const tree = importSession(header, events);
@@ -78,10 +126,10 @@ test('实时同步把未完成事件段扩展为完整消息，不重复已有�
   assert.deepEqual(again.nodes, complete.nodes);
 });
 
-test('分支导出重映射官方引用且保留不相关数字', () => {
-  const events = log();
-  events.push({ seq: 11, time: 30, type: 'developer/message', data: { turn: 0, step: 0, headerSeq: 4, message: { role: 'developer', id: 'dev', content: [], source: { kind: 'example' } }, unrelatedSeq: 4 }, surfaceOp: 'append' });
-  events.push({ seq: 12, time: 31, type: 'user/message', data: { ...user('summary'), source: { kind: 'compaction' } }, sourceEventSeqs: [2], surfaceOp: { op: 'replace', startSeq: 2, endSeq: 2 } });
+test('多次压缩后分支导出重映射官方引用且保留不相关数字', () => {
+  const events = compactedLog();
+  events.push({ seq: 14, time: 30, type: 'developer/message', data: { turn: 0, step: 0, headerSeq: 4, message: { role: 'developer', id: 'dev', content: [], source: { kind: 'example' } }, unrelatedSeq: 4 }, surfaceOp: 'append' });
+  events.push({ seq: 15, time: 31, type: 'user/message', data: { ...user('summary'), source: { kind: 'compact-checkpoint', compactionId: 'compact-15' } }, sourceEventSeqs: [13], surfaceOp: { op: 'replace', startSeq: 13, endSeq: 13 } });
   const tree = importSession(header, events);
   const path = getActivePath(tree);
   const all = [...(path[0].rootPrefixEvents ?? tree.prefixEvents), ...path.flatMap((node) => node.events), ...(path.at(-1)!.tailEvents ?? [])];
@@ -239,16 +287,17 @@ test('pending和claimed根消息在领取前新增请求事件后保持节点身
   }
 });
 
-test('不同分支相同seq的来源与替换范围只解析所选路径', () => {
-  const events = log();
-  events.push({ seq: 11, time: 30, type: 'user/message', data: { ...user('summary-old'), source: { kind: 'compaction' } }, surfaceOp: { op: 'replace', startSeq: 6, endSeq: 8 }, sourceEventSeqs: [6, 8] });
+test('多次压缩后不同分支相同seq的来源与替换范围只解析所选路径', () => {
+  const events = compactedLog();
   const original = importSession(header, events);
   const [parent, oldAssistant] = getActivePath(original);
   const operation = retryNode(original, oldAssistant.id);
   const replacement = cloneValue(events);
   replacement[6].data.message = assistant('other-answer');
   replacement[8].data.message = { ...(replacement[8].data.message as Record<string, unknown>), id: 'other-tool' };
-  replacement[11].data = { ...user('summary-new'), source: { kind: 'compaction' } };
+  for (const event of replacement.slice(11)) {
+    event.data = { ...user(`summary-new-${event.seq}`), source: { kind: 'compact-checkpoint', compactionId: `compact-new-${event.seq}` } };
+  }
   let tree = operation.tree;
   for (let count = operation.events.length + 1; count <= replacement.length; count += 1) {
     tree = syncSession(tree, header, replacement.slice(0, count));

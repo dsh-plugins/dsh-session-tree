@@ -43,11 +43,12 @@ export function validateEvents(events: readonly SessionEvent[], startSeq = 0): v
       || event.sourceEventSeqs.some((seq) => !Number.isSafeInteger(seq) || seq < 0 || seq >= event.seq))) {
       throw new Error(`事件来源序号无效：${event.seq}`);
     }
+    // 压缩摘要的事件序号不代表当前上下文位置；完整替换范围由官方存储编解码器校验。
     if (event.surfaceOp !== undefined && event.surfaceOp !== 'append'
       && (!isRecord(event.surfaceOp) || event.surfaceOp.op !== 'replace'
         || !Number.isSafeInteger(event.surfaceOp.startSeq) || !Number.isSafeInteger(event.surfaceOp.endSeq)
-        || event.surfaceOp.startSeq < 0 || event.surfaceOp.endSeq < event.surfaceOp.startSeq
-        || event.surfaceOp.endSeq >= event.seq)) {
+        || event.surfaceOp.startSeq < 0 || event.surfaceOp.endSeq < 0
+        || event.surfaceOp.startSeq >= event.seq || event.surfaceOp.endSeq >= event.seq)) {
       throw new Error(`表面替换范围无效：${event.seq}`);
     }
   }
