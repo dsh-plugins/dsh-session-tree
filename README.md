@@ -40,7 +40,7 @@
 - 推送 `main`：将稳定基础版本 `X.Y.Z` 转为 `X.Y.Z-dev.<GitHub run ID>`，发布到 `next`。
 - 推送 `vX.Y.Z` 标签：要求标签与 `package.json` 版本完全一致，发布到 `latest`。
 - 已存在的版本跳过重复发布；注册表查询出现非 404 错误时立即失败。
-- 正式版发布成功后，`scripts/dump-npm-latest.mjs` 读取 npm 的精确版本、发布时间、tarball 和 integrity，回写 `npm-latest.json` 并提交到 `main`；数据未变化时不提交。
+- 正式版发布成功后，[shared npm-publish workflow](https://github.com/dsh-plugins/dsh-npm-publish) 读取 npm 的精确版本、发布时间、tarball 和 integrity，回写 `npm-latest.json` 并提交到 `main`；数据未变化时不提交。
 
 首次发布前，在 npm 为此仓库的 `npm-publish.yml` 配置 Trusted Publisher，或在 GitHub 配置有目标包发布权限的 `NPM_TOKEN`。发布任务授予 `id-token: write`；元数据回写任务使用 `GITHUB_TOKEN` 的 `contents: write`，仓库分支保护需允许该机器人提交。未配置 npm 认证或分支保护拒绝回写时，对应任务会报错。
 
