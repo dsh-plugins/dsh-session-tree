@@ -23,14 +23,18 @@
     "build": "tsc && tsdown --config tsdown.config.ts",
     "test": "tsx --test tests/*.test.ts"
   },
-  "engines": { "node": ">=24.9.0", "dsh": ">=0.2.2-alpha.1" },
+  "engines": { "node": ">=24.9.0", "dsh": "0.2.2-rc.1 || 0.2.2-rc.2 || 0.2.2-rc.3 || >=0.2.3-alpha.2 <0.2.4-0" },
   "dsh": {
     "bundle": { "patch": "./cordis.patch.yml" },
-    "client": { "inject": ["@dsh-plugin/dsh-loader"], "platform": "web" }
+    "client": {
+      "platform": "web",
+      "inject": ["@dsh-plugin/dsh-loader"],
+      "external": ["@dsh-plugin/dsh-loader/client"]
+    }
   },
-  "peerDependencies": { "@dsh-plugin/dsh-loader": "^2.0.0-dev.43473963317" },
+  "peerDependencies": { "@dsh-plugin/dsh-loader": "^2.0.0-dev.45328381034" },
   "devDependencies": {
-    "@dsh-plugin/dsh-loader": "2.0.0-dev.43473963317",
+    "@dsh-plugin/dsh-loader": "2.0.0-dev.45328381034",
     "@types/node": "^26.2.0",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",

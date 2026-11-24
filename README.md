@@ -11,9 +11,14 @@
 
 ## 安装与运行
 
-本插件需要 `@dsh-plugin/dsh-loader@^2.0.0-dev.43473963317`，其中包含会话扩展和分支轮次标题接口。开发依赖固定为 `2.0.0-dev.43473963317`，使用 Node.js 24 与 pnpm 11.17.0。构建使用 `pnpm install --frozen-lockfile`、`pnpm run typecheck`、`pnpm run build`，算法测试使用 `pnpm test`。
+在 DSH `0.2.3-alpha.2` 中先启用 loader，再安装会话树开发版：
 
-支持 DSH `>=0.2.2-alpha.1`；已有独立实例验证记录见 `docs/VERIFICATION.md`。安装后需要重启目标宿主，使 loader 从会话创建时捕获生命周期；缺少句柄的旧活动会话会明确拒绝改写。
+```sh
+dsh plugin --profile web add @dsh-plugin/dsh-loader@next
+dsh plugin --profile web add @dsh-plugin/dsh-session-tree@next
+```
+
+安装后重启目标宿主，让 loader 在聊天和会话初始化前安装适配。缺少生命周期句柄的旧活动会话会拒绝改写。历史验证记录见 [验证说明](docs/VERIFICATION.md)。开发使用 Node.js 24 与 pnpm 11.17.0，依次运行 `pnpm install --frozen-lockfile`、`pnpm run typecheck`、`pnpm run build` 和 `pnpm test`。
 
 ## 数据
 

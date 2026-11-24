@@ -8,7 +8,7 @@ import { TreeFiles } from './storage.js';
 import { SessionTrees } from './session-trees.js';
 
 export const name = '@dsh-plugin/dsh-session-tree';
-export const inject = ['dshLoader', 'sessions', 'agents', 'sessionController', 'sessionPersistence', 'llm', 'connection', 'attachments'];
+export const inject = ['dshLoader', 'sessions', 'agents', 'sessionController', 'sessionPersistence', 'llm', 'attachments'];
 
 /** 插件存储位于独立数据目录；请求上限包含图片的 base64 编码。 */
 export interface Config {
@@ -16,9 +16,6 @@ export interface Config {
   maxRequestBytes?: number;
 }
 
-interface Connection {
-  authorizeIndex(request: IncomingMessage, response: ServerResponse): boolean;
-}
 interface Attachments {
   readImage(reference: Record<string, unknown>, signal?: AbortSignal): Promise<{ data: Uint8Array }>;
   readFileStream(reference: Record<string, unknown>, signal?: AbortSignal): AsyncIterable<Uint8Array>;
@@ -72,19 +69,11 @@ export async function apply(ctx: CordisContext, config: Config = {}): Promise<vo
     }
   };
   const trees = new SessionTrees(loader, files, report);
-  const connection = ctx.get('connection') as Connection;
   const attachments = ctx.get('attachments') as Attachments;
   const requests = new Set<Promise<void>>();
   const aborts = new Set<AbortController>();
-  const off = loader.web.register('/_dsh/session-tree', (request: IncomingMessage, response: ServerResponse) => {
+  const handler = (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     const task = (async () => {
-      if (!connection.authorizeIndex(request, response)) {
-        return;
-      }
-      const origin = request.headers.origin;
-      if (request.headers['sec-fetch-site'] === 'cross-site' || (origin && new URL(origin).host !== request.headers.host)) {
-        throw new TreeError('forbidden', '拒绝跨站会话修改。', 403);
-      }
       const path = new URL(request.url ?? '/', 'http://localhost').pathname;
       const match = /^\/_dsh\/session-tree\/([^/]+)(?:\/(select|edit|retry|recall)|\/draft\/([A-Za-z0-9_-]{8,128})\/(\d+))?$/.exec(path);
       if (!match) {
@@ -161,12 +150,15 @@ export async function apply(ctx: CordisContext, config: Config = {}): Promise<vo
     requests.add(task);
     void task.finally(() => { requests.delete(task); });
     return task;
-  });
-  ctx.effect(() => () => {
-    off();
-    for (const controller of aborts) {
-      controller.abort();
-    }
-    return Promise.all([...requests]).then(() => trees.dispose());
+  };
+  ctx.effect(() => {
+    const off = loader.web.registerOwner({ kind: 'prefix', path: '/_dsh/session-tree', handler });
+    return () => {
+      off();
+      for (const controller of aborts) {
+        controller.abort();
+      }
+      return Promise.all([...requests]).then(() => trees.dispose());
+    };
   });
 }

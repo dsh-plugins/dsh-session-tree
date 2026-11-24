@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@dsh-plugin/dsh-loader':
-        specifier: 2.0.0-dev.43473963317
-        version: 2.0.0-dev.43473963317(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.0.0-dev.45328381034
+        version: 2.0.0-dev.45328381034(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/node':
         specifier: ^26.2.0
         version: 26.6.6
@@ -51,8 +51,8 @@ packages:
     resolution: {integrity: sha512-Y5tqevQaUAZhhj82BpYMNC1ssvLQTVAfwKdm8iy8qwmhvC2/CpcAu8OC+QEtjM7pMk7knx83u1Qj8gzkicyelw==}
     engines: {node: '>=6.9.0'}
 
-  '@dsh-plugin/dsh-loader@2.0.0-dev.43473963317':
-    resolution: {integrity: sha512-Pw7/zmRRk/OQbyeCY+ncfakXp1iXzvZNyJ0IYe+yW/viiCKc2CwQB0tvEs4WqHI4cCwgEzzaa6IL2Vqyc/YhrQ==}
+  '@dsh-plugin/dsh-loader@2.0.0-dev.45328381034':
+    resolution: {integrity: sha512-jhgqZ27UOzdyOouhpdZ/Y2i5IXb97YpuUJBeVwZCIrYOit94zcVN/ZXextQ/FfVRIwpKpNXfcmwpfhZFVAXBaw==}
     engines: {node: '>=24.9.0'}
     hasBin: true
     peerDependencies:
@@ -1180,12 +1180,15 @@ packages:
 
   yuku-ast@0.8.7:
     resolution: {integrity: sha512-h6+4bDfyootiMB9vckk5uKo5r5j0GHrkr17FQTDNfEsFT3DWlN9uu1HJwQwc64pgmLCI945fWM3lbTIqxjT3GQ==}
+    deprecated: 'Yuku is now one package with one core. Use "yuku" instead: https://yuku.fyi/javascript/. Existing installs keep working but get no more fixes.'
 
   yuku-codegen@0.8.7:
     resolution: {integrity: sha512-adwDZSh8oVDzhE6Du9PwVWxcOxeV0e2EVhUuMKWfhSY4wkrDq9eqixlxFF3l/XGUV1E7UFzhpz9393MUumkyNw==}
+    deprecated: 'Yuku is now one package with one core. Use "yuku" instead: https://yuku.fyi/javascript/. Existing installs keep working but get no more fixes.'
 
   yuku-parser@0.8.7:
     resolution: {integrity: sha512-vRD9nwt4L3aYpxNqeSC4WqLv58xrXef0Ong1Mc45CTXTIpvLafx7JO05sczmQZwdLEZvywrLOGdNC5+Rp5N1BQ==}
+    deprecated: 'Yuku is now one package with one core. Use "yuku" instead: https://yuku.fyi/javascript/. Existing installs keep working but get no more fixes.'
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -1219,7 +1222,7 @@ snapshots:
 
   '@babel/runtime@7.29.14': {}
 
-  '@dsh-plugin/dsh-loader@2.0.0-dev.43473963317(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@dsh-plugin/dsh-loader@2.0.0-dev.45328381034(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@arco-design/web-react': 2.66.18(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@icon-park/react': 1.4.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
