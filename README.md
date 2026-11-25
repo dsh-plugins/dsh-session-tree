@@ -11,7 +11,7 @@
 
 ## 安装与运行
 
-在 DSH `0.2.3-alpha.2` 中先启用 loader，再安装会话树开发版：
+在 DSH `0.2.2-rc.1` 至 `0.2.2-rc.5` 或 `0.2.3-alpha.2` 中先启用 loader，再安装会话树开发版：
 
 ```sh
 dsh plugin --profile web add @dsh-plugin/dsh-loader@next

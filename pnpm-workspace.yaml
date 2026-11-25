@@ -2,4 +2,4 @@ allowBuilds:
   esbuild: true
 # 仅放行已核对提交与 tarball 校验值的 loader 精确版本。
 minimumReleaseAgeExclude:
-  - '@dsh-plugin/dsh-loader@2.0.0-dev.45328381034'
+  - '@dsh-plugin/dsh-loader@2.0.0-dev.45572825995'
